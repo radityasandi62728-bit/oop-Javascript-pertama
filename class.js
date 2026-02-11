@@ -25,25 +25,37 @@ class MataKuliah {
     } 
 }
 class HasilUjian {
-    constructor(mahasiswa, nilai, matakuliah) {
+    constructor(mahasiswa, daftarnilai) {
         this.mahasiswa = mahasiswa
-        this.nilai = nilai
-        this.matakuliah = matakuliah
+        this.daftarnilai = daftarnilai
     }
     tampilkanHasil() {
-        console.log("Mahasiswa: ", this.mahasiswa.nama)
-        console.log("Mata Kuliah: ", this.matakuliah.namaMK)
-        console.log("Nilai = ", this.nilai)
-        if (this.nilai >= 75) {
+        this.mahasiswa.greeting()
+        console.log("_______________________________")
+        this.daftarnilai.forEach((data) => {
+            console.log("Mata Kuliah: ", data.mk.namaMK)
+            console.log("Nilai: ", data.nilai)
+            
+        if (data.nilai >= 75) {
             console.log("Status: Lulus")
         } else {
             console.log("Status: Tidak Lulus")
         }
+        });
+         console.log("_______________________________")
     }
 }
 
 
 let mhs1 = new Mahasiswa("Raditya", "21120119120060", "Informatika", 5)
 let mk1 = new MataKuliah("Pemrograman Web", 3, 5)
-let ujian1 = new HasilUjian(mhs1, 85, mk1)
+let mk2 = new MataKuliah("Basis Data", 3, 5)
+
+//buat array untuk menampung daftar nilai
+
+let ujian1 = new HasilUjian (mhs1, [
+    {mk : mk1, nilai: 85},
+    {mk : mk2, nilai: 90}
+])
+
 ujian1.tampilkanHasil()
