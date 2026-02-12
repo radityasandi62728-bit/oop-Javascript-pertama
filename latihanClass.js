@@ -11,6 +11,14 @@ class Anggota {
         console.log("Nama Anggota: ", this.Nama_Anggota)
         console.log("Alamat Anggota: ", this.Alamat_anggota)
     }
+    pinjamBuku(buku) {
+       if(buku.tersedia) {
+            buku.pinjam()
+            console.log(`${this.Nama_Anggota} berhasil meminjam buku ${buku.Judul}`)
+       } else {
+            console.log(`Buku ${buku.Judul} tidak tersedia untuk dipinjam`)
+       }
+    }
 }
 
 class Buku {
@@ -19,12 +27,25 @@ class Buku {
         this.Judul = Judul
         this.Penerbit = Penerbit
         this.Penulis = Penulis
+        this.tersedia = true
     }
     infoBuku() {
         console.log("ID Buku: ", this.ID_buku)
         console.log("Judul: ", this.Judul)
         console.log("Penerbit: ", this.Penerbit)
         console.log("Penulis: ", this.Penulis)
+    }
+    pinjam() {
+        if(this.tersedia) {
+            this.tersedia = false
+            console.log("Peminjaman Berhasil")
+        } else {
+            console.log("Buku Tidak Tersedia")
+        }
+    }
+    kembalikan() {
+        this.tersedia = true
+        console.log("Buku Berhasil Dikembalikan")
     }
 }
 
@@ -64,3 +85,6 @@ console.log("_______________________________")
 pustakawan.infoPustakawan()
 console.log("_______________________________")
 admin.infoAdmin()
+console.log("_______________________________")
+anggota.pinjamBuku(buku)
+console.log("Status buku:", buku.tersedia)
