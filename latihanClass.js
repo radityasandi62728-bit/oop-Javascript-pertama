@@ -21,6 +21,21 @@ class Anggota {
     }
 }
 
+class Perpustakaan {
+    constructor(){
+        this.daftarBuku = []
+    }
+    tambahBuku(buku) {
+        this.daftarBuku.push(buku)
+    }
+    tampilkanBuku() {
+        this.daftarBuku.forEach((buku) => {
+            buku.infoBuku()
+            console.log("_______________________________")
+        })
+    }
+}
+
 class Buku {
     constructor(ID_buku, Judul, Penerbit, Penulis) {
         this.ID_buku = ID_buku
@@ -60,6 +75,9 @@ class Pustakawan {
         console.log("Nama Pustakawan: ", this.Nama_pustakawan)
         console.log("Alamat Pustakawan: ", this.Alamat_pustakawan)
     }
+    VerifikasiPeminjaman(anggota, buku) {
+        console.log(`Pustakawan ${this.Nama_pustakawan} memverifikasi peminjaman buku ${buku.Judul} oleh anggota ${anggota.Nama_Anggota}`)
+    }
 }
 class Admin {
     constructor(ID_admin, Nama_admin, Alamat_admin) {
@@ -78,6 +96,14 @@ let anggota = new Anggota("A021", "Raditya", "JL.Kosmik No.12")
 let buku = new Buku("B001", "Pemrograman JavaScript", "Erlangga", "Cantika")
 let pustakawan = new Pustakawan("P100", "Celia", "JL.Merdeka No.45")
 let admin = new Admin("AD10", "Lyra", "JL.Gajah Mada No.78")
+
+let perpus = new Perpustakaan()
+perpus.tambahBuku(buku)
+perpus.tambahBuku(new Buku("B002","Dasar-Dasar HTML","Gramedia","Budi"))
+perpus.tambahBuku(new Buku("B003","CSS untuk Pemula","Erlangga","Sari"))
+
+
+
 anggota.infoAnggota()
 console.log("_______________________________")
 buku.infoBuku()
@@ -88,3 +114,10 @@ admin.infoAdmin()
 console.log("_______________________________")
 anggota.pinjamBuku(buku)
 console.log("Status buku:", buku.tersedia)
+pustakawan.VerifikasiPeminjaman(anggota, buku)
+console.log("_______________________________")
+buku.kembalikan()
+console.log("Status buku:", buku.tersedia)
+console.log("_______________________________")
+console.log("Daftar Buku:")
+perpus.tampilkanBuku()
