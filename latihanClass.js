@@ -11,13 +11,9 @@ class Anggota {
         console.log("Nama Anggota: ", this.Nama_Anggota)
         console.log("Alamat Anggota: ", this.Alamat_anggota)
     }
-    pinjamBuku(buku) {
-       if(buku.tersedia) {
-            buku.pinjam()
-            console.log(`${this.Nama_Anggota} berhasil meminjam buku ${buku.Judul}`)
-       } else {
-            console.log(`Buku ${buku.Judul} tidak tersedia untuk dipinjam`)
-       }
+    mintaPinjamBuku(Perpustakaan, ID_Buku, pustakawan) {
+        pustakawan.VerifikasiPeminjaman(this, Perpustakaan.cariBuku(ID_Buku))
+        pustakawan.prosesPeminjaman(Perpustakaan, this, ID_Buku)
     }
 }
 
@@ -34,6 +30,22 @@ class Perpustakaan {
             console.log("_______________________________")
         })
     }
+    cariBuku(ID_buku) {
+        return this.daftarBuku.find(b => b.ID_buku === ID_buku)
+    }
+    prosesPeminjaman(anggota, ID_buku) {
+        let buku = this.daftarBuku.find(b => b.ID_buku === ID_buku)
+        if(!buku) {
+            console.log("Buku tidak ditemukan")
+            return
+        } 
+        if(!buku.tersedia) {
+            console.log("Buku sedang dipinjam")
+            return
+        }
+        buku.pinjam(anggota) 
+            console.log(`Anggota ${anggota.Nama_Anggota} berhasil meminjam buku ${buku.Judul}`)
+    } 
 }
 
 class Buku {
@@ -43,6 +55,7 @@ class Buku {
         this.Penerbit = Penerbit
         this.Penulis = Penulis
         this.tersedia = true
+        this.peminjam = null
     }
     infoBuku() {
         console.log("ID Buku: ", this.ID_buku)
@@ -50,17 +63,13 @@ class Buku {
         console.log("Penerbit: ", this.Penerbit)
         console.log("Penulis: ", this.Penulis)
     }
-    pinjam() {
-        if(this.tersedia) {
-            this.tersedia = false
-            console.log("Peminjaman Berhasil")
-        } else {
-            console.log("Buku Tidak Tersedia")
-        }
+    pinjam(anggota) {
+        this.tersedia = false
+        this.peminjam = anggota
     }
     kembalikan() {
         this.tersedia = true
-        console.log("Buku Berhasil Dikembalikan")
+        this.peminjam = null
     }
 }
 
@@ -76,8 +85,13 @@ class Pustakawan {
         console.log("Alamat Pustakawan: ", this.Alamat_pustakawan)
     }
     VerifikasiPeminjaman(anggota, buku) {
-        console.log(`Pustakawan ${this.Nama_pustakawan} memverifikasi peminjaman buku ${buku.Judul} oleh anggota ${anggota.Nama_Anggota}`)
+        console.log(`Pustakawan ${this.Nama_pustakawan} memverifikasi peminjaman buku ${buku.Judul} yang di pinjam ${anggota.Nama_Anggota}`)
     }
+    prosesPeminjaman(perpus, anggota, idBuku){
+    console.log(`Pustakawan ${this.Nama_pustakawan} memproses peminjaman...`)
+    perpus.prosesPeminjaman(anggota, idBuku)
+}
+
 }
 class Admin {
     constructor(ID_admin, Nama_admin, Alamat_admin) {
@@ -103,21 +117,4 @@ perpus.tambahBuku(new Buku("B002","Dasar-Dasar HTML","Gramedia","Budi"))
 perpus.tambahBuku(new Buku("B003","CSS untuk Pemula","Erlangga","Sari"))
 
 
-
-anggota.infoAnggota()
-console.log("_______________________________")
-buku.infoBuku()
-console.log("_______________________________")
-pustakawan.infoPustakawan()
-console.log("_______________________________")
-admin.infoAdmin()
-console.log("_______________________________")
-anggota.pinjamBuku(buku)
-console.log("Status buku:", buku.tersedia)
-pustakawan.VerifikasiPeminjaman(anggota, buku)
-console.log("_______________________________")
-buku.kembalikan()
-console.log("Status buku:", buku.tersedia)
-console.log("_______________________________")
-console.log("Daftar Buku:")
-perpus.tampilkanBuku()
+anggota.mintaPinjamBuku(perpus, "B002", pustakawan)
