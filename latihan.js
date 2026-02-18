@@ -5,6 +5,10 @@ class User {
     greeting() {
         console.log("Nama: ", this.nama)
     }
+    sendMessage(chat, text) {
+        console.log(`${this.nama}: ${text}`)
+        chat.receiveFromUser(this, text)
+    }
 }
 
 class Ai {
@@ -13,6 +17,17 @@ class Ai {
     }
     introduce(user) {
         console.log(`Halo ${user.nama}, perkenalkan aku ${this.Ai_name}, senang bertemu denganmu!`)
+    }
+    async generateResponse(user, text) {
+        await this.think()
+        const processingMessage = `sedang memproses pesanmu: "${text}"`
+        console.log(processingMessage)
+        return `hai ${user.nama}, ada yang bisa ${this.Ai_name} bantu?`
+    }
+    think() {
+        return new Promise(resolve => {
+            setTimeout(resolve, 2000)
+        })
     }
 }
 
@@ -29,9 +44,18 @@ class Chat {
          this.user.greeting()
             this.Ai.introduce(this.user)   
     }
+    async receiveFromUser(user, text) {
+        console.log(`${this.Ai.Ai_name} sedang berpikir...`)
+        const response = await this.Ai.generateResponse(user, text)
+        this.sendToUser(response)
+    }
+
+    sendToUser(message) {
+        console.log(`${this.Ai.Ai_name}: ${message}`)
+    }
     
 }
 let user = new User("Raditya")
 let Ai1 = new Ai("Celia")
 let chat1 = new Chat(user, Ai1)
-chat1.sapa()
+user.sendMessage(chat1, "hai celia")
