@@ -12,8 +12,9 @@ class User {
 }
 
 class Ai {
-    constructor(Ai_name) {
+    constructor(Ai_name, calculator) {
         this.Ai_name = Ai_name
+        this.calculator = calculator
     }
     introduce(user) {
         console.log(`Halo ${user.nama}, perkenalkan aku ${this.Ai_name}, senang bertemu denganmu!`)
@@ -22,7 +23,17 @@ class Ai {
         await this.think()
         const processingMessage = `sedang memproses pesanmu: "${text}"`
         console.log(processingMessage)
-        return `hai ${user.nama}, ada yang bisa ${this.Ai_name} bantu?`
+        //const returnMessage = `hai ${user.nama}, ada yang bisa ${this.Ai_name} bantu?`
+        //console.log(returnMessage)
+
+        if (this.calculator.isMath(text)) {
+            const result = this.calculator.calculate(text)
+            if (result !== null) {
+                return `Hasil perhitungannya adalah ${result}`
+            }
+            return "Aku tidak bisa menghitung itu, maaf..."
+        }
+        return `Hai ${user.nama}`
     }
     think() {
         return new Promise(resolve => {
@@ -55,7 +66,22 @@ class Chat {
     }
     
 }
+class Calculator {
+    isMath(text) {
+        return /^[0-9\-*/().\s]+$/.test(text)
+    }
+    calculate(expression) {
+        try {
+            return eval(expression)
+        } catch (error) {
+            return null
+        }
+    }
+}
+
 let user = new User("Raditya")
-let Ai1 = new Ai("Celia")
-let chat1 = new Chat(user, Ai1)
-user.sendMessage(chat1, "hai celia")
+let calc = new Calculator()
+let ai = new Ai("Celia", calc)
+let chat1 = new Chat(user, ai)
+
+user.sendMessage(chat1, "5*10")
