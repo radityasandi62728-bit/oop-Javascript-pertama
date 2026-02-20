@@ -17,23 +17,23 @@ class Ai {
         this.calculator = calculator
     }
     introduce(user) {
-        console.log(`Halo ${user.nama}, perkenalkan aku ${this.Ai_name}, senang bertemu denganmu!`)
+        return `Halo ${user.nama}, perkenalkan aku ${this.Ai_name}, senang bertemu denganmu!`
     }
     async generateResponse(user, text) {
         await this.think()
         const processingMessage = `sedang memproses pesanmu: "${text}"`
         console.log(processingMessage)
-        //const returnMessage = `hai ${user.nama}, ada yang bisa ${this.Ai_name} bantu?`
-        //console.log(returnMessage)
 
         if (this.calculator.isMath(text)) {
             const result = this.calculator.calculate(text)
             if (result !== null) {
                 return `Hasil perhitungannya adalah ${result}`
             }
-            return "Aku tidak bisa menghitung itu, maaf..."
+            console.log("Aku tidak bisa menghitung itu, maaf...")
+
+            return `hai ${user.nama}, ada yang bisa ${this.Ai_name} bantu?`
         }
-        return `Hai ${user.nama}`
+        return this.introduce(user)
     }
     think() {
         return new Promise(resolve => {
@@ -84,4 +84,6 @@ let calc = new Calculator()
 let ai = new Ai("Celia", calc)
 let chat1 = new Chat(user, ai)
 
-user.sendMessage(chat1, "5*10")
+//user.sendMessage(chat1, "5*10")
+
+user.sendMessage(chat1, "Hai Celia, apa kabar?")
