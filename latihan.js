@@ -15,6 +15,7 @@ class Ai {
     constructor(Ai_name, calculator) {
         this.Ai_name = Ai_name
         this.calculator = calculator
+        this.personality = "centil"
     }
     introduce(user) {
         return `Halo ${user.nama}, perkenalkan aku ${this.Ai_name}, senang bertemu denganmu!`
@@ -27,11 +28,11 @@ class Ai {
         if (this.calculator.isMath(text)) {
             const result = this.calculator.calculate(text)
             if (result !== null) {
-                return `Hasil perhitungannya adalah ${result}`
+                return this.makeCentil(`Hasil perhitungannya adalah ${result}, `)
             }
             console.log("Aku tidak bisa menghitung itu, maaf...")
 
-            return `hai ${user.nama}, ada yang bisa ${this.Ai_name} bantu?`
+            return this.makeCentil(`hai ${user.nama}, ada yang bisa ${this.Ai_name} bantu?`)
         }
         return this.introduce(user)
     }
@@ -39,6 +40,12 @@ class Ai {
         return new Promise(resolve => {
             setTimeout(resolve, 2000)
         })
+    }
+
+    makeCentil(text) {
+        const kata = [" hehe~", " mudah loh~", " masa gitu aja ga bisa sih~", " lihat, aku pintar kan~"]
+        const random = kata[Math.floor(Math.random() * kata.length)]
+        return text + random
     }
 }
 
@@ -84,6 +91,4 @@ let calc = new Calculator()
 let ai = new Ai("Celia", calc)
 let chat1 = new Chat(user, ai)
 
-//user.sendMessage(chat1, "5*10")
-
-user.sendMessage(chat1, "Hai Celia, apa kabar?")
+user.sendMessage(chat1, "5*100")
