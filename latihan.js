@@ -5,9 +5,9 @@ class User {
     greeting() {
         console.log("Nama: ", this.nama)
     }
-    sendMessage(chat, text) {
+    async sendMessage(chat, text) {
         console.log(`${this.nama}: ${text}`)
-        chat.receiveFromUser(this, text)
+        await chat.receiveFromUser(this, text)
     }
 }
 
@@ -16,26 +16,42 @@ class Ai {
         this.Ai_name = Ai_name
         this.calculator = calculator
         this.personality = "centil"
+        this.memory = []
     }
     introduce(user) {
         return `Halo ${user.nama}, perkenalkan aku ${this.Ai_name}, senang bertemu denganmu!`
     }
     async generateResponse(user, text) {
         await this.think()
-        const processingMessage = `sedang memproses pesanmu: "${text}"`
-        console.log(processingMessage)
+        console.log(`${this.Ai_name} sedang memproses pesan...`)
 
+        const privousMathCount = this.memory.filter(m => this.calculator.isMath(m.message)).length
+        let response = ""
         if (this.calculator.isMath(text)) {
             const result = this.calculator.calculate(text)
-            if (result !== null) {
-                return this.makeCentil(`Hasil perhitungannya adalah ${result}, `)
-            }
-            console.log("Aku tidak bisa menghitung itu, maaf...")
+            response += this.makeCentil(`Hasil dari ${text} adalah ${result}.`)
+        } 
 
-            return this.makeCentil(`hai ${user.nama}, ada yang bisa ${this.Ai_name} bantu?`)
+        if (privousMathCount >= 2) {
+            const komentar = await this.speak()
+            response += `\n${this.Ai_name}: ${komentar}`
+        }
+
+        this.memory.push({user: user.nama, message:text})
+        if (response !== " ") {
+            return response
         }
         return this.introduce(user)
     }
+
+    async speak() {
+       const kata_speak = [" uhh matematika lagi? bosan tau"," kamu suka matematika ya?"]
+       const random = kata_speak[Math.floor(Math.random() * kata_speak.length)]
+
+       await new Promise(resolve => setTimeout(resolve, 2500))
+       return random
+    }
+
     think() {
         return new Promise(resolve => {
             setTimeout(resolve, 2000)
@@ -53,6 +69,7 @@ class Chat {
     constructor(user, Ai) {
         this.user = user
         this.Ai = Ai
+        this.queque = Promise.resolve()
     }
     startChat() {
         console.log(`Chat dimulai antara ${this.user.nama} dan ${this.Ai.Ai_name}`)
@@ -63,9 +80,13 @@ class Chat {
             this.Ai.introduce(this.user)   
     }
     async receiveFromUser(user, text) {
-        console.log(`${this.Ai.Ai_name} sedang berpikir...`)
-        const response = await this.Ai.generateResponse(user, text)
-        this.sendToUser(response)
+        this.queque = this.queque.then(async () => {
+           console.log(`${this.Ai.Ai_name} sedang berpikir...`)
+           const response = await this.Ai.generateResponse(user, text)
+           this.sendToUser(response)
+        })
+        
+        return this.queque
     }
 
     sendToUser(message) {
@@ -75,7 +96,7 @@ class Chat {
 }
 class Calculator {
     isMath(text) {
-        return /^[0-9\-*/().\s]+$/.test(text)
+        return /^[0-9\-*/().\s+]+$/.test(text)
     }
     calculate(expression) {
         try {
@@ -91,4 +112,11 @@ let calc = new Calculator()
 let ai = new Ai("Celia", calc)
 let chat1 = new Chat(user, ai)
 
-user.sendMessage(chat1, "5*100")
+async function start() {
+    await user.sendMessage(chat1, "5*100")
+    await user.sendMessage(chat1, "2+2")
+    await user.sendMessage(chat1, "10/2")
+}
+
+start()
+
